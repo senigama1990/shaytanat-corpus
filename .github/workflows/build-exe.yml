@@ -1,0 +1,48 @@
+name: Build Shaytanat.exe
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install PyInstaller
+        run: python -m pip install pyinstaller==6.11.1
+
+      - name: Build exe
+        working-directory: app
+        run: python -m PyInstaller --noconfirm --clean --onefile --windowed --name Shaytanat --icon icon.ico --add-data "web;web" shaytanat_app.pyw
+
+      - name: Package data
+        shell: pwsh
+        run: Compress-Archive -Path data/* -DestinationPath Shaytanat_data.zip
+
+      - name: Keep build output
+        uses: actions/upload-artifact@v4
+        with:
+          name: Shaytanat
+          path: |
+            app/dist/Shaytanat.exe
+            Shaytanat_data.zip
+
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Шайтанат ${{ github.ref_name }}
+          body_path: RELEASE_NOTES.md
+          files: |
+            app/dist/Shaytanat.exe
+            Shaytanat_data.zip
