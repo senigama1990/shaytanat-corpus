@@ -42,6 +42,16 @@ jobs:
         shell: pwsh
         run: echo "VER=$((Get-Content VERSION -Raw).Trim())" >> $env:GITHUB_ENV
 
+      # a release of the same version is rebuilt from the current commit
+      - name: Remove previous release of this version
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view "v$env:VER" --repo "${{ github.repository }}" *> $null
+          if ($LASTEXITCODE -eq 0) { gh release delete "v$env:VER" --repo "${{ github.repository }}" --cleanup-tag --yes }
+          exit 0
+
       - name: Publish release
         uses: softprops/action-gh-release@v2
         with:
