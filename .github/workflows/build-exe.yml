@@ -2,7 +2,8 @@ name: Build Shaytanat.exe
 
 on:
   push:
-    tags: ['v*']
+    branches: [main]
+    paths: ['VERSION', 'app/**', 'data/**', 'RELEASE_NOTES.md', '.github/workflows/build-exe.yml']
   workflow_dispatch:
 
 permissions:
@@ -37,11 +38,17 @@ jobs:
             app/dist/Shaytanat.exe
             Shaytanat_data.zip
 
+      - name: Read version
+        shell: pwsh
+        run: echo "VER=$((Get-Content VERSION -Raw).Trim())" >> $env:GITHUB_ENV
+
       - name: Publish release
-        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          name: Шайтанат ${{ github.ref_name }}
+          tag_name: v${{ env.VER }}
+          target_commitish: ${{ github.sha }}
+          name: Шайтанат ${{ env.VER }}
+          make_latest: true
           body_path: RELEASE_NOTES.md
           files: |
             app/dist/Shaytanat.exe

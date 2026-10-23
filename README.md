@@ -35,7 +35,7 @@
 
 ## Сборка программы
 
-Файл `Shaytanat.exe` собирается автоматически (GitHub Actions, `.github/workflows/build-exe.yml`) при выпуске новой версии. На своём компьютере программу можно запустить через `app/START.bat` (нужен Python 3.9+) или собрать через `app/BUILD_EXE.bat`.
+Файл `Shaytanat.exe` собирается автоматически (GitHub Actions, `.github/workflows/build-exe.yml`) при каждом изменении программы или данных (номер версии в файле `VERSION`). На своём компьютере программу можно запустить через `app/START.bat` (нужен Python 3.9+) или собрать через `app/BUILD_EXE.bat`.
 
 ## Как цитировать
 
